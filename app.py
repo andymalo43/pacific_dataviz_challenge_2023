@@ -248,7 +248,7 @@ with tab2:
 
 
 
-	lines_map_import = conn.execute(f"select latitude,longitude,pays_exporter,sum(total) as total from df_import where date_releve ={annee_select} group by 1,2,3").df()
+	lines_map_import = conn.execute(f"select max(latitude) as latitude,max(longitude) as longitude,pays_exporter,sum(total) as total from df_import where date_releve ={annee_select} group by 3").df()
 
 
 
