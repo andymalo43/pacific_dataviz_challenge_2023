@@ -204,7 +204,7 @@ with tab2:
 
 	for row in lines_map_import.itertuples():
 		#folium.PolyLine(smooth_factor=100,locations=[[row.latitude,row.longitude],[-21.3019905,165.4880773]], weight=int(row.total/production_locale['total'].iloc[0])*10, tooltip=f"{row.total/production_locale['total'].iloc[0]}",).add_to(m)
-		AntPath([[row.latitude,row.longitude],[-21.3019905,165.4880773]], delay=400, dash_array=[30,15], color="red", weight=5, tooltip=f"Origine = {row.pays_exporter} \n {row.total} T", popup=f"ratio IMPORT/(IMPORT+LOCAL) = {millify((row.total/production_locale['total'].iloc[0])*100, precision=2)}").add_to(m)
+		AntPath([[row.latitude,row.longitude],[-21.3019905,165.4880773]], delay=400, dash_array=[30,15], color="red", weight=5, tooltip=f"Origine = {row.pays_exporter} \n {row.total} T", popup=f"ratio IMPORT/(IMPORT+LOCAL) = {millify((row.total/(production_locale['total'].iloc[0]+import_total['total'].iloc[0]))*100, precision=2)}").add_to(m)
 
 	folium.CircleMarker(
 		location=[-21.3019905,165.4880773],
