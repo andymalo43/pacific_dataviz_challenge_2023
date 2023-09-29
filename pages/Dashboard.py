@@ -5,6 +5,7 @@ from streamlit_folium import st_folium
 import pandas as pd
 import plotly.express as px
 from millify import millify
+from folium.plugins import AntPath
 
 import plotly.graph_objects as go
 
@@ -189,7 +190,7 @@ with tab2:
 
 
 	m = folium.Map(location=[-21.3019905,165.4880773], zoom_start=1)
-	m = folium.Map(location=[0,40], zoom_start=3)
+	m = folium.Map(location=[-21,100], zoom_start=3)
 
 	folium.Marker(
 		[-21.3019905,165.4880773], popup="New Caledonia", tooltip="Nouvelle-Calédonie"
@@ -202,7 +203,8 @@ with tab2:
 
 
 	for row in lines_map_import.itertuples():
-		folium.PolyLine(smooth_factor=100,locations=[[row.latitude,row.longitude],[-21.3019905,165.4880773]], weight=int(row.total/production_locale['total'].iloc[0])*10, tooltip=f"{row.total/production_locale['total'].iloc[0]}",).add_to(m)
+		#folium.PolyLine(smooth_factor=100,locations=[[row.latitude,row.longitude],[-21.3019905,165.4880773]], weight=int(row.total/production_locale['total'].iloc[0])*10, tooltip=f"{row.total/production_locale['total'].iloc[0]}",).add_to(m)
+		AntPath([[row.latitude,row.longitude],[-21.3019905,165.4880773]], delay=400, dash_array=[30,15], color="red", weight=3).add_to(m)
 
 	folium.CircleMarker(
 		location=[-21.3019905,165.4880773],
