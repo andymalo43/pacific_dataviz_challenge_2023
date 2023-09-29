@@ -199,15 +199,15 @@ with tab1 :
 	st.header("Evolution du volume des fruits et légumes par continent de provenance")
 	st.plotly_chart(fig, use_container_width=True)
 
-	st.header("Volume des fruits et légumes par continent de provenance et par regroupement (classification CPS et ADRAF)")
+	st.header("Volume des fruits et légumes par continent de provenance et par regroupement")
 	produit_par_pays = conn.execute("select pays_exporter, regroupement2, sum(total) as total from df_all where 1=1 and regroupement2 is not null group by 1,2 ").df()
 	st.bar_chart(data=produit_par_pays, x="pays_exporter", y="total", color="regroupement2")
 
-	st.header("Evolution du Volume des fruits et légumes par regroupement (classification CPS et ADRAF)")
+	st.header("Evolution du Volume des fruits et légumes par regroupement")
 	produit_par_pays = conn.execute("select date_releve, regroupement2, sum(total) as total from df_all where 1=1 and regroupement2 is not null group by 1,2 ").df()
 	st.bar_chart(data=produit_par_pays, x="date_releve", y="total", color="regroupement2")
 
-	st.header("Volume des fruits et légumes par regroupement (classification CPS et ADRAF) et continent de provenance ")
+	st.header("Volume des fruits et légumes par regroupement")
 	produit_par_pays = conn.execute("select pays_exporter, regroupement2, sum(total) as total from df_all where 1=1 and regroupement2 is not null group by 1,2 ").df()
 	st.bar_chart(data=produit_par_pays, x="regroupement2", y="total", color="pays_exporter")
 
@@ -275,12 +275,12 @@ with tab2:
 
 	#st.dataframe(all_date_type_production)
 
-	col_reg1.header("Volume des fruits et légumes par continent de provenance et par regroupement (classification CPS et ADRAF)")
+	col_reg1.header("Volume des fruits et légumes par continent de provenance et par regroupement ")
 	col_reg1.bar_chart(date_type_production, x="type_production",y="total",color="regroupement2")
 
 	le_plus_importe = conn.execute(f"select regroupement2, date_releve, sum(total) as total from df_all where trim(pays_exporter) <> 'local' and date_releve ={annee_select} and regroupement2 is not null group by 1,2").df()
 
 
-	col_reg2.header("Répartition des regroupements de produits le plus importé (classification CPS)")
+	col_reg2.header("Répartition des regroupements de produits le plus importé ")
 	fig = px.pie(le_plus_importe, values='total', names='regroupement2')
 	col_reg2.plotly_chart(fig)
