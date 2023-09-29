@@ -190,7 +190,7 @@ with tab2:
 
 
 	m = folium.Map(location=[-21.3019905,165.4880773], zoom_start=1)
-	m = folium.Map(location=[-21,100], zoom_start=3)
+	m = folium.Map(location=[-21,120], zoom_start=3)
 
 	folium.Marker(
 		[-21.3019905,165.4880773], popup="New Caledonia", tooltip="Nouvelle-Calédonie"
@@ -198,13 +198,13 @@ with tab2:
 
 
 
-	lines_map_import = conn.execute(f"select latitude,longitude,sum(total) as total from df_import where date_releve ={annee_select} group by 1,2").df()
+	lines_map_import = conn.execute(f"select latitude,longitude,pays_exporter,sum(total) as total from df_import where date_releve ={annee_select} group by 1,2,3").df()
 
 
 
 	for row in lines_map_import.itertuples():
 		#folium.PolyLine(smooth_factor=100,locations=[[row.latitude,row.longitude],[-21.3019905,165.4880773]], weight=int(row.total/production_locale['total'].iloc[0])*10, tooltip=f"{row.total/production_locale['total'].iloc[0]}",).add_to(m)
-		AntPath([[row.latitude,row.longitude],[-21.3019905,165.4880773]], delay=400, dash_array=[30,15], color="red", weight=3).add_to(m)
+		AntPath([[row.latitude,row.longitude],[-21.3019905,165.4880773]], delay=400, dash_array=[30,15], color="red", weight=5, tooltip=f"Origine = {row.pays_exporter} \n {row.total} T", popup=f"ratio IMPORT/(IMPORT+LOCAL) = {millify((row.total/production_locale['total'].iloc[0])*100, precision=2)}").add_to(m)
 
 	folium.CircleMarker(
 		location=[-21.3019905,165.4880773],
