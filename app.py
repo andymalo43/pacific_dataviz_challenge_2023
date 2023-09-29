@@ -5,7 +5,9 @@ from streamlit_folium import st_folium
 import pandas as pd
 import plotly.express as px
 from millify import millify
+import pygwalker
 from folium.plugins import AntPath
+import streamlit.components.v1 as components
 
 import plotly.graph_objects as go
 
@@ -20,29 +22,35 @@ st.title("Evolution des imports de Fruits et Légumes en Nouvelle-Calédonie de 
 with st.expander("voir description"):
     st.header("Description")
     st.markdown("""
-    L'objectif de ce dashboard est d'avoir un état des lieux des imports et des productions de Fruits et Légumes en Nouvelle-Calédonie. 
+L'objectif de ce dashboard est d'avoir un état des lieux des imports et des productions de Fruits et Légumes en Nouvelle-Calédonie. 
 
-    Nous n'avons pas pu descendre niveau comparaison fruit et légume exacte. Nous avons conservé les noms des regroupements définis dans datasets de la CPS et de l'ADRAF : 
-            
-    - Edible fruit, nuts, peel of citrus fruit, melons
-    - Oil seed, oleagic fruits, grain, seed, fruit, etc, ne
-    - Vegetable, fruit, nut, etc food preparations
-    - TOTAL FRUITS (HORS VANILLE)
-    - TOTAL LEGUMES
+Nous n'avons pas pu descendre niveau comparaison fruit et légume exacte. Nous avons conservé les noms des regroupements définis dans datasets de la CPS et de l'ADRAF : 
+        
+- Edible fruit, nuts, peel of citrus fruit, melons
+- Oil seed, oleagic fruits, grain, seed, fruit, etc, ne
+- Vegetable, fruit, nut, etc food preparations
+- TOTAL FRUITS (HORS VANILLE)
+- TOTAL LEGUMES
 
-    Vous pourrez trouver dans l'onglet dashboard : 
-    - un onglet Annuel avec :
-        - un sélecteur sur une année
-        - des informations de volumétries générales
-        - une carte avec la provenance des imports par continent et volume
-        - une répartition des fruits et légums par provenance et regroupement
-        - une répartition des regroupements de produits le plus importé sur l'année
-    - un onglet Général avec :
-        - un graphique mixte montrant l'évolution des volumes des fruits et légumes par continent de provenance et le ratio volume LOCAL / (LOCAL + IMPORT)
-        - une répartition des fruits et légumes par continent de provenance et par regroupement
-        - Evolution du Volume des fruits et légumes par regroupement (classification CPS et ADRAF)
-        - Volume des fruits et légumes par regroupement (classification CPS et ADRAF) et continent de provenance
-                        
+Vous pourrez trouver dans l'onglet dashboard : 
+- un onglet Annuel avec :
+    - un sélecteur sur une année
+    - des informations de volumétries générales
+    - une carte avec la provenance des imports par continent et volume
+    - une répartition des fruits et légums par provenance et regroupement
+    - une répartition des regroupements de produits le plus importé sur l'année
+- un onglet Global avec :
+    - un graphique mixte montrant l'évolution des volumes des fruits et légumes par continent de provenance et le ratio volume LOCAL / (LOCAL + IMPORT)
+    - une répartition des fruits et légumes par continent de provenance et par regroupement
+    - Evolution du Volume des fruits et légumes par regroupement (classification CPS et ADRAF)
+    - Volume des fruits et légumes par regroupement (classification CPS et ADRAF) et continent de provenance
+- un onglet Self-Analytics avec la possibilité de jouer avec le dataset ayant comme attributs : 
+    - pays_exporter = continent d'import
+    - regroupement2 = catégorie d'import
+    - date_releve = année de relevé
+    - latitude/longitude = coordonnées du continent d'import
+    - total = quantité en T d'import
+
     """)
     st.header("Sources de données")
     st.markdown(""" 
@@ -144,7 +152,7 @@ df_all = pd.concat([df_local,df_import])
 
 annee_select = 2015
 
-tab2, tab1 = st.tabs(["Annuel","Global"])
+tab2, tab1,tab3 = st.tabs(["Annuel","Global","Self-Analytics"])
 
 with tab1 :
 	import_total = conn.execute(f"select date_releve,  sum(total) as total_import from df_all where trim(pays_exporter) <> 'local' group by 1").df()
@@ -284,3 +292,7 @@ with tab2:
 	col_reg2.header("Répartition des regroupements de produits le plus importé ")
 	fig = px.pie(le_plus_importe, values='total', names='regroupement2')
 	col_reg2.plotly_chart(fig)
+
+with tab3:
+    pyg_html=pygwalker.walk(df_all,return_html=True)
+    components.html(pyg_html, height=1000, scrolling=True)
